@@ -29,8 +29,7 @@ export async function verifyToken( req, res, next ) {
     
         if( !userFound ) {
             return res.status( 404 ).json( {
-                message : 'User does not exist!',
-                data : {}
+                message : 'User unathorized',
             } )
         }
 

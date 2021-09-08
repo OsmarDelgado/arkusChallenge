@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs'
 import Prisma from '@prisma/client'
 const { PrismaClient } = Prisma
 
@@ -21,5 +22,37 @@ export async function initialRoles() {
         console.log( roles )
     } catch (error) {
         console.log(error)
+    }
+}
+
+export async function createSuperUser() {
+    const counter = await user.count()
+
+    if ( counter > 0 ) return
+    
+    try {
+        const superUser = await user.create( {
+            data : {
+                username : 'admin',
+                email : 'admin@admin.com',
+                firstName : 'admin',
+                lastName : 'admin',
+                password : await bcrypt.hash( 'admin', 10 ),
+                roleId : 1,
+                // profile : {
+                //     create : {
+                //         bio : 'here comes somenthing great of you',
+                //         englishLevel : 'Your English level',
+                //         technicalKnowledge : 'Your technical knowledge',
+                //         urlCV : 'Your ArkusNexus CV Link'
+                //     }
+                // }
+            }
+        } )
+
+        console.log( `SuperUser created: ${ JSON.stringify(superUser, null, 4) }` )
+
+    } catch (error) {
+        console.log( error )
     }
 }

@@ -57,7 +57,7 @@ export async function createRole( req, res ) {
     const { name, description } = req.body
 
     try {
-        const roleExist = await role.findFirst( {
+        const roleExist = await role.findUnique( {
             where : {
                 name
             },
@@ -102,7 +102,7 @@ export async function updateRole( req, res ) {
     const { name, description } = req.body
 
     try {
-        const roleVerifyExist = await role.findFirst( {
+        const roleVerifyExist = await role.findUnique( {
             where : {
                 name
             }
@@ -145,6 +145,18 @@ export async function deleteRole( req, res ) {
     const { roleId } = req.params
 
     try {
+        const roleFound = await role.findUnique( {
+            where : {
+                id : parseInt( roleId )
+            }
+        } )
+
+        if( !roleFound ) {
+            return res.status( 404 ).json( {
+                message : 'Role not found!'
+            } )
+        }
+
         const roleDelete = await role.delete( {
             where : {
                 id : parseInt( roleId )

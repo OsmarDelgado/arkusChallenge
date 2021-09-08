@@ -9,7 +9,7 @@ export async function signUp( req, res ) {
     const { username, email, firstName, lastName, password, roleId } = req.body
 
     try {
-        const userFound = await user.create( {
+        const userSignUp = await user.create( {
             data : {
                 username,
                 email,
@@ -28,14 +28,14 @@ export async function signUp( req, res ) {
             }
         } )
 
-        const token = jwt.sign( { id : userFound.id, email : userFound.email, roleId : userFound.roleId }, config.SECRET, {
+        const token = jwt.sign( { id : userSignUp.id, email : userSignUp.email, roleId : userSignUp.roleId }, config.SECRET, {
             expiresIn : 86400
         } )
 
         return res.status( 200 ).json( {
             message : "User created succesfuly",
             token : token,
-            data : userFound
+            data : userSignUp
         } );
 
     } catch (error) {
@@ -55,22 +55,13 @@ export async function signIn( req, res ) {
         const userFound = await user.findUnique( {
             where : {
                 email
-            },
-
-            select : {
-                id : true,
-                email : true,
-                firstName : true,
-                lastName : true,
-                password : true,
-                roleId : true
             }
         } )
     
         if( !userFound ) {
             return res.status( 404 ).json( {
-                message : 'User does not exist',
-                data : {}
+                message : 'User incorrect',
+                token : ''
             } )
         }
 

@@ -8,7 +8,7 @@ import morgan from 'morgan'
 // Import as pkg the package.json
 import pkg from '../package.json';
 // Import Initial Setup for Roles
-import { initialRoles } from "./libs/initialSetup.js";
+import { initialRoles, createSuperUser } from "./libs/initialSetup.js";
 // Config Enviroment variables
 import dotenv from 'dotenv'
 dotenv.config()
@@ -25,6 +25,8 @@ import usersRoutes from './routes/user.routes.js'
  */
 const app = express()
 initialRoles()
+createSuperUser()
+
 // Import data from package.json for get its information
 app.set('pkg', pkg)
 

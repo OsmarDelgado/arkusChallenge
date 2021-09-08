@@ -44,7 +44,7 @@ model User {
 
   // Relation Role-User One-to-Many
   role Role @relation( fields: [ roleId ], references: [ id ] )
-  roleId Int
+  roleId Int @default( 3 )
 
   // Relation Teams-User Many-to-Many
   teams Team[]
