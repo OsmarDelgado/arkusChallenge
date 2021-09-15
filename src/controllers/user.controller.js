@@ -6,13 +6,9 @@ const { user } = new PrismaClient
 export async function getUsers( req, res ) {
     try {
         const users = await user.findMany( {
-            select : {
-                id : true,
-                email : true,
-                firstName : true,
-                lastName : true,
-                roleId : true,
-                profile : true
+            include : {
+                profile : true,
+                teams : true
             }
         } )
     
@@ -40,13 +36,9 @@ export async function getUsersById( req, res ) {
                 id : parseInt( userId )
             },
 
-            select : {
-                id : true,
-                email : true,
-                firstName : true,
-                lastName : true,
-                roleId : true,
-                profile : true
+            include : {
+                profile : true,
+                teams : true
             }
         } )
 

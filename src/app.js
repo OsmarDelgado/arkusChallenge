@@ -19,6 +19,9 @@ dotenv.config()
 import authRoutes from './routes/auth.routes.js'
 import rolesRoutes from './routes/role.routes.js'
 import usersRoutes from './routes/user.routes.js'
+import teamsRoutes from './routes/team.routes.js'
+import accountRoutes from './routes/account.routes.js'
+import profilesRoutes from './routes/profile.routes.js'
 
 /** 
  * Initialization
@@ -46,6 +49,9 @@ app.use( express.urlencoded({ extended : false }) )
 app.use( '/api/v1/auth', authRoutes )
 app.use( '/api/v1/roles', rolesRoutes )
 app.use( '/api/v1/users', usersRoutes )
+app.use( '/api/v1/teams', teamsRoutes )
+app.use( '/api/v1/accounts', accountRoutes )
+app.use( '/api/v1/profiles', profilesRoutes )
 
 /**
  * GET home
