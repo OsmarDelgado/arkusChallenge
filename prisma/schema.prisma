@@ -65,7 +65,7 @@ model Team {
   account Account[]
 
   // Relation Teams-User Many-to-Many
-  user UserTeam[]
+  users UserTeam[]
   // users User[]
 
   @@map("team")
@@ -74,12 +74,12 @@ model Team {
 model Account {
   id Int @default( autoincrement() ) @id
   name String @db.VarChar( 50 ) @unique
-  client String @db.VarChar( 100 ) 
+  client String @db.VarChar( 100 )
   operationChief String @db.VarChar( 150 )
 
   // Relation Account-Team One-to-Many
-  team Team @relation( fields: [ teamId ], references: [ id ] )
-  teamId Int
+  team Team? @relation( fields: [ teamId ], references: [ id ] )
+  teamId Int?
 
   @@map("account")
 }

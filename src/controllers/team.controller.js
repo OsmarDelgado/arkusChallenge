@@ -1,13 +1,12 @@
-import bcrypt from 'bcryptjs'
 import Prisma from '@prisma/client'
 const { PrismaClient } = Prisma
 const { team } = new PrismaClient
 
-export async function getTeam( req, res ) {
+export async function getTeams( req, res ) {
     try {
         const teams = await team.findMany( {
             include : {
-                user : true,
+                users : true,
                 account : true
             }
         } )
@@ -37,7 +36,7 @@ export async function getTeamById( req, res ) {
             },
 
             include : {
-                user : true,
+                users : true,
                 account : true
             }
         } )
@@ -74,7 +73,7 @@ export async function createTeam( req, res ) {
             },
 
             include : {
-                user : true,
+                users : true,
                 account : true
             }
         } )
@@ -112,7 +111,7 @@ export async function createTeam( req, res ) {
 
 export async function updateTeam( req, res ) {
     const { teamId } = req.params
-    const { usersId } = req.body
+    const { name, usersId } = req.body
 
     try {
         const verifyTeam = await team.findUnique( {
@@ -121,7 +120,7 @@ export async function updateTeam( req, res ) {
             },
 
             include : {
-                user : true,
+                users : true,
                 account : true
             }
         } )
@@ -134,13 +133,13 @@ export async function updateTeam( req, res ) {
         
         if( usersId ) {
             usersId.forEach( async (userAdd) => {
-                const connectUsers = await team.update( {
+                await team.update( {
                     where : {
                         id : verifyTeam.id
                     },
 
                     data : {
-                        user : {
+                        users : {
                             create : {
                                 userId : userAdd
                             }
@@ -150,8 +149,19 @@ export async function updateTeam( req, res ) {
             } )
         }
 
+        const teamUpdate = await team.update( {
+            where : {
+                id : verifyTeam.id
+            },
+
+            data : {
+                name
+            }
+        } )
+
         return res.status( 201 ).json( {
-            message : 'Team Updated'
+            message : 'Team Updated',
+            data : teamUpdate
         } )
 
     } catch (error) {
