@@ -7,7 +7,7 @@ export async function getTeam( req, res ) {
     try {
         const teams = await team.findMany( {
             include : {
-                users : true,
+                user : true,
                 account : true
             }
         } )
@@ -37,7 +37,7 @@ export async function getTeamById( req, res ) {
             },
 
             include : {
-                users : true,
+                user : true,
                 account : true
             }
         } )
@@ -74,7 +74,7 @@ export async function createTeam( req, res ) {
             },
 
             include : {
-                users : true,
+                user : true,
                 account : true
             }
         } )
@@ -121,7 +121,7 @@ export async function updateTeam( req, res ) {
             },
 
             include : {
-                users : true,
+                user : true,
                 account : true
             }
         } )
@@ -133,22 +133,24 @@ export async function updateTeam( req, res ) {
         }
         
         if( usersId ) {
-            usersId.forEach( async (user) => {
+            usersId.forEach( async (userAdd) => {
                 const connectUsers = await team.update( {
                     where : {
                         id : verifyTeam.id
                     },
 
                     data : {
-                        users : {
-                            connect : { id : user }
+                        user : {
+                            create : {
+                                userId : userAdd
+                            }
                         }
                     }
                 } )
             } )
         }
 
-        return res.status( 204 ).json( {
+        return res.status( 201 ).json( {
             message : 'Team Updated'
         } )
 

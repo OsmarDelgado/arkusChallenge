@@ -51,8 +51,8 @@ model User {
   roleId Int @default( 3 )
 
   // Relation Teams-User Many-to-Many
-  // teams UserTeam[]
-  teams Team[]
+  teams UserTeam[]
+  // teams Team[]
 
   @@map("user")
 }
@@ -65,8 +65,8 @@ model Team {
   account Account[]
 
   // Relation Teams-User Many-to-Many
-  // userTeam UserTeam[]
-  users User[]
+  user UserTeam[]
+  // users User[]
 
   @@map("team")
 }
@@ -86,15 +86,15 @@ model Account {
 
 // Test the explicit relation Many-to-Many
 
-// model UserTeam {
-//   user User @relation( fields: [ userId ], references: [ id ] )
-//   userId Int
-//   team Team @relation( fields: [ teamId ], references: [ id ] )
-//   teamId Int
-//   startDate DateTime @db.Date @default( now() )
-//   endDate DateTime? @db.Date
+model UserTeam {
+  user User @relation( fields: [ userId ], references: [ id ] )
+  userId Int
+  team Team @relation( fields: [ teamId ], references: [ id ] )
+  teamId Int
+  startDate DateTime @db.Date @default( now() )
+  endDate DateTime? @db.Date
 
-//   @@id([ userId, teamId ])
+  @@id([ userId, teamId ])
 
-//   @@map("user_team")
-// }
+  @@map("user_team")
+}
