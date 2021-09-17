@@ -70,8 +70,6 @@ export async function isAdmin( req, res, next ) {
             }
         } )
 
-        // console.log( roleExist.name )
-
         if( roleExist.name === "Superadmin" || roleExist.name === "Admin" ) return next()
 
         return res.status( 403 ).json( {
@@ -112,8 +110,6 @@ export async function isUser( req, res, next ) {
                 name : true
             }
         } )
-
-        // console.log( roleExist.name )
 
         if( roleExist.name === "User" ) return next()
 

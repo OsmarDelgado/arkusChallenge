@@ -10,5 +10,4 @@ router.post( '/', [ verifyToken, isAdmin ], createProfile )
 router.put( '/:profileId', [ verifyToken, isAdmin ], updateProfile )
 router.delete( '/:profileId', [ verifyToken, isAdmin ], deleteProfile )
 
-
 export default router
