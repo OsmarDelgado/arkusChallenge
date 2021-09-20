@@ -6,7 +6,14 @@ export async function getTeams( req, res ) {
     try {
         const teams = await team.findMany( {
             include : {
-                users : true,
+                users : {
+                    where : {
+                        endDate : {
+                            equals : null
+                        }
+                    }
+                },
+
                 account : true
             }
         } )
@@ -36,7 +43,14 @@ export async function getTeamById( req, res ) {
             },
 
             include : {
-                users : true,
+                users : {
+                    where : {
+                        endDate : {
+                            equals : null
+                        }
+                    }
+                },
+
                 account : true
             }
         } )
@@ -109,7 +123,7 @@ export async function createTeam( req, res ) {
     }
 }
 
-export async function updateTeam( req, res ) {
+export async function addUserToTeam( req, res ) {
     const { teamId } = req.params
     const { name, usersId } = req.body
 
@@ -120,7 +134,14 @@ export async function updateTeam( req, res ) {
             },
 
             include : {
-                users : true,
+                users : {
+                    where : {
+                        endDate : {
+                            equals : null
+                        }
+                    }
+                },
+
                 account : true
             }
         } )
@@ -162,6 +183,73 @@ export async function updateTeam( req, res ) {
         return res.status( 201 ).json( {
             message : 'Team Updated',
             data : teamUpdate
+        } )
+
+    } catch (error) {
+        console.log( error )
+
+        return res.status( 500 ).json( {
+            message : "Internal Server Error",
+            data : []
+        } )
+    }
+}
+
+export async function removeUserFromTeam( req, res ) {
+    const { teamId } = req.params
+    const { userId, endDate } = req.body
+
+    try {
+        const verifyTeam = await team.findUnique( {
+            where : {
+                id : parseInt( teamId )
+            },
+
+            include : {
+                users : {
+                    where : {
+                        endDate : {
+                            equals : null
+                        }
+                    }
+                },
+
+                account : true
+            }
+        } )
+
+        if( !verifyTeam ) {
+            return res.status( 404 ).json( {
+                message : "Team does not exist!",
+            } )
+        }
+
+        const userRemoved = await team.update( {
+            where : {
+                id : verifyTeam.id
+            },
+
+            data : {
+                users : {
+                    update : {
+                        data : {
+                            endDate : new Date( endDate )
+                        },
+                        
+                        where : {
+                            userId_teamId : {
+                                userId : parseInt( userId ),
+                                teamId : verifyTeam.id
+                            }
+                        }
+                    }
+                }
+            }
+        } )
+
+        return res.status( 201 ).json( {
+            message : 'Team Updated',
+            data : userRemoved
         } )
 
     } catch (error) {
