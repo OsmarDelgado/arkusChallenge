@@ -21,7 +21,6 @@ import rolesRoutes from './routes/role.routes.js'
 import usersRoutes from './routes/user.routes.js'
 import teamsRoutes from './routes/team.routes.js'
 import accountRoutes from './routes/account.routes.js'
-import profilesRoutes from './routes/profile.routes.js'
 import myProfileRoutes from './routes/myProfile.routes.js'
 
 /** 
@@ -52,8 +51,6 @@ app.use( '/api/v1/roles', rolesRoutes )
 app.use( '/api/v1/users', usersRoutes )
 app.use( '/api/v1/teams', teamsRoutes )
 app.use( '/api/v1/accounts', accountRoutes )
-app.use( '/api/v1/profiles', profilesRoutes )
-app.use( '/api/v1/profiles', profilesRoutes )
 app.use( '/api/v1/myProfile', myProfileRoutes )
 
 /**

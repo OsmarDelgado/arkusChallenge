@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken'
+import config from '../auth/auth.config.js'
 import bcrypt from 'bcryptjs'
 import Prisma from '@prisma/client'
 const { PrismaClient } = Prisma
@@ -95,7 +97,7 @@ export async function createUser( req, res ) {
                     roleId,
                     profile : {
                         create : {
-                            bio : 'here comes somenthing great of you',
+                            bio : 'Here comes somenthing great of you',
                             englishLevel : 'Your English level',
                             technicalKnowledge : 'Your technical knowledge',
                             urlCV : 'Your ArkusNexus CV Link'
@@ -119,7 +121,7 @@ export async function createUser( req, res ) {
                 password : await bcrypt.hash( password, 10 ),
                 profile : {
                     create : {
-                        bio : 'here comes somenthing great of you',
+                        bio : 'Here comes somenthing great of you',
                         englishLevel : 'Your English level',
                         technicalKnowledge : 'Your technical knowledge',
                         urlCV : 'Your ArkusNexus CV Link'
@@ -145,7 +147,7 @@ export async function createUser( req, res ) {
 
 export async function updateUser( req, res ) {
     const { userId } = req.params
-    const { username, email, firstName, lastName, password, roleId } = req.body
+    const { username, email, firstName, lastName, password, roleId, bio, englishLevel,technicalKnowledge,urlCV } = req.body
 
     try {
         const userVerifyExist = await user.findUnique( {
@@ -165,6 +167,11 @@ export async function updateUser( req, res ) {
                 id : parseInt( userId )
             },
 
+            include: {
+                profile : true,
+                teams: true
+            },
+
             data : {
                 email,
                 firstName,
@@ -172,11 +179,11 @@ export async function updateUser( req, res ) {
                 password : await bcrypt.hash( password, 10 ),
                 roleId,
                 profile : {
-                    create : {
-                        bio : 'here comes somenthing great of you',
-                        englishLevel : 'Your English level',
-                        technicalKnowledge : 'Your technical knowledge',
-                        urlCV : 'Your ArkusNexus CV Link'
+                    update : {
+                        bio,
+                        englishLevel,
+                        technicalKnowledge,
+                        urlCV
                     }
                 }
             }
@@ -203,6 +210,11 @@ export async function deleteUser( req, res ) {
         const userFound = await user.findUnique( {
             where : {
                 id : parseInt( userId )
+            },
+
+            include : {
+                profile : true,
+                teams : true
             }
         } )
 
@@ -214,7 +226,7 @@ export async function deleteUser( req, res ) {
 
         const userDelete = await user.delete( {
             where : {
-                id : parseInt( userId )
+                id : userFound.id
             }
         } )
 
@@ -229,6 +241,99 @@ export async function deleteUser( req, res ) {
         return res.status( 500 ).json( {
             message : "Internal Server Error",
             data : []
+        } )
+    }
+}
+
+/**
+ * Personal profile
+ */
+ export async function getMyProfile( req, res ) {
+    const token = req.headers[ 'x-access-token' ]
+    const decodedJwt = jwt.verify( token, config.SECRET )
+
+    try {
+        const myUser = await user.findUnique( {
+            where : {
+                id : decodedJwt.id
+            },
+
+            include : {
+                profile : true,
+                teams : true
+            }
+        } )
+
+        return res.status( 200 ).json( {
+            message : 'User',
+            data : myUser
+        } )
+
+    } catch (error) {
+        console.log( error )
+
+        return res.status( 500 ).json( {
+            message : "Internal Server Error",
+        } )
+    }
+}
+
+export async function updateMyProfile( req, res ) {
+    const token = req.headers[ 'x-access-token' ]
+    const decodedJwt = jwt.verify( token, config.SECRET )
+    const { firstName, lastName, bio, englishLevel, technicalKnowledge, urlCV } = req.body
+
+    try {
+        const verifyMyUser = await user.findUnique( {
+            where : {
+                id : decodedJwt.id
+            }
+        } )
+
+        const userUpdate = await user.update( {
+            where : {
+                id : verifyMyUser.id
+            },
+
+            include : {
+                profile : true,
+                teams : true
+            },
+
+            data : {
+                firstName,
+                lastName,
+
+                profile : {
+                    upsert : {
+                        create : {
+                            bio,
+                            englishLevel,
+                            technicalKnowledge,
+                            urlCV
+                        },
+
+                        update : {
+                            bio,
+                            englishLevel,
+                            technicalKnowledge,
+                            urlCV
+                        }
+                    }
+                }
+            }
+        } )
+
+        return res.status( 200 ).json( {
+            message : 'User updated successfully',
+            data : userUpdate
+        } )
+
+    } catch (error) {
+        console.log( error )
+
+        return res.status( 500 ).json( {
+            message : "Internal Server Error",
         } )
     }
 }

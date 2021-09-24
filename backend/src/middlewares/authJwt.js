@@ -60,17 +60,7 @@ export async function isAdmin( req, res, next ) {
             }
         } )
 
-        const roleExist = await role.findUnique( {
-            where : {
-                id : userFound.roleId
-            },
-
-            select : {
-                name : true
-            }
-        } )
-
-        if( roleExist.name === "Superadmin" || roleExist.name === "Admin" ) return next()
+        if( userFound.roleId === 1 || userFound.roleId === 2 ) return next()
 
         return res.status( 403 ).json( {
             message : "You don't have permissions!"
@@ -101,17 +91,7 @@ export async function isUser( req, res, next ) {
             }
         } )
 
-        const roleExist = await role.findUnique( {
-            where : {
-                id : userFound.roleId
-            },
-
-            select : {
-                name : true
-            }
-        } )
-
-        if( roleExist.name === "User" ) return next()
+        if( userFound.roleId === 1 || userFound.roleId === 2 || userFound.roleId === 3 ) return next()
 
         return res.status( 403 ).json( {
             message : "You don't have permissions!"

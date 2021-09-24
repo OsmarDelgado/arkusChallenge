@@ -29,7 +29,7 @@ model Profile {
   urlCV String? @db.VarChar( 255 )
 
   // Relation User-Profile One-to-One
-  user User @relation( fields: [ userId ], references: [ id ] )
+  user User @relation( fields: [ userId ], references: [ id ], onDelete: Cascade )
   userId Int
 
   @@map("profile")
@@ -78,7 +78,7 @@ model Account {
   operationChief String @db.VarChar( 150 )
 
   // Relation Account-Team One-to-Many
-  team Team? @relation( fields: [ teamId ], references: [ id ] )
+  team Team? @relation( fields: [ teamId ], references: [ id ], onDelete: SetNull )
   teamId Int?
 
   @@map("account")
@@ -87,9 +87,9 @@ model Account {
 // Test the explicit relation Many-to-Many
 
 model UserTeam {
-  user User @relation( fields: [ userId ], references: [ id ] )
+  user User @relation( fields: [ userId ], references: [ id ], onDelete: Cascade )
   userId Int
-  team Team @relation( fields: [ teamId ], references: [ id ] )
+  team Team @relation( fields: [ teamId ], references: [ id ], onDelete: Cascade )
   teamId Int
   startDate DateTime @db.Date @default( now() )
   endDate DateTime? @db.Date
