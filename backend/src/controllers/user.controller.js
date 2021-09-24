@@ -88,6 +88,10 @@ export async function createUser( req, res ) {
 
         if( roleId ) {
             const userUser = await user.create( {
+                include : {
+                    profile : true
+                },
+
                 data: {
                     username,
                     email,
