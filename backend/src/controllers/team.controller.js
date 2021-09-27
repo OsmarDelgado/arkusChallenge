@@ -175,6 +175,10 @@ export async function addUserToTeam( req, res ) {
                 id : verifyTeam.id
             },
 
+            include: {
+                users : true
+            },
+
             data : {
                 name
             }
@@ -227,6 +231,10 @@ export async function removeUserFromTeam( req, res ) {
         const userRemoved = await team.update( {
             where : {
                 id : verifyTeam.id
+            },
+
+            include : {
+                users : true
             },
 
             data : {
